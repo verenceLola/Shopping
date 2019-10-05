@@ -2,10 +2,11 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from .backends import JWTAuthentication
 from rest_framework import serializers, validators
-from rest_framework.authtoken.models import Token
 
 
 User = get_user_model()
+
+
 class RegistrationSerializer(serializers.ModelSerializer):
     """Serializers registration requests and creates a new user."""
     confirm_password = serializers.CharField(write_only=True)
@@ -82,13 +83,17 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.Serializer):
     """The class to serialize login details"""
-    email = serializers.CharField(max_length=255, required=True, error_messages={
-        'required': 'Your email address is required to log in.'
-    })
+    email = serializers.CharField(
+        max_length=255, required=True, error_messages={
+            'required': 'Your email address is required to log in.'
+        }
+    )
     username = serializers.CharField(max_length=255, read_only=True)
-    password = serializers.CharField(max_length=128, write_only=True, required=True, error_messages={
-        'required': 'Kindly enter your password to log in.'
-    })
+    password = serializers.CharField(
+        max_length=128, write_only=True, required=True, error_messages={
+            'required': 'Kindly enter your password to log in.'
+        }
+    )
 
     def validate(self, data):
         """
