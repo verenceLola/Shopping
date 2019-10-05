@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 
+
 def success_response(message, data, **kwargs):
     """
     return a formated response if request successful
@@ -9,6 +10,7 @@ def success_response(message, data, **kwargs):
         "message": message,
         "data": data,
     }, kwargs.get('status_code'))
+
 
 def error_response(message, **kwargs):
     return Response(({

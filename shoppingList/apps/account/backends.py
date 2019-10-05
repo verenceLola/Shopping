@@ -5,6 +5,7 @@ from django.conf import settings
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import get_user_model
 
+
 class JWTAuthentication(TokenAuthentication):
     keyword = 'Bearer'
 
