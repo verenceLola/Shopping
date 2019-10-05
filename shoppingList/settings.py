@@ -38,7 +38,28 @@ INSTALLED_APPS = [
 
     # external apps
     'rest_framework',
+    'rest_framework.authtoken',
+
+    #internal apps
+    'shoppingList.apps.account',
 ]
+
+AUTH_USER_MODEL = 'account.User'
+
+REST_FRAMEWORK = {
+    'NON_FIELD_ERRORS_KEY': 'error',
+
+    # by default every user should be authenticated
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # specifies a local custom authentication class
+        'shoppingList.apps.account.backends.JWTAuthentication',
+    ),
+
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
