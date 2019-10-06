@@ -59,7 +59,7 @@ REST_FRAMEWORK = {
     ),
 
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',  # noqa
-    'PAGE_SIZE': env.int('PAGE_SIZE', 1)
+    'PAGE_SIZE': env.int('PAGE_SIZE', 10)
 }
 
 MIDDLEWARE = [

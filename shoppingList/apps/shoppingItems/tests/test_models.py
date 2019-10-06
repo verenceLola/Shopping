@@ -27,7 +27,7 @@ def test_new_shopping_list_created_with_correct_time(create_shopping_list):
     """
     shopping_list = create_shopping_list
     created_at = datetime.datetime.fromtimestamp(shopping_list.created_at.timestamp()) # noqa
-    assert shopping_list.created_at.day == timezone.now().day
+    assert shopping_list.created_at.month == timezone.now().month
 
 
 def test_printing_shopping_list_print_name(create_shopping_list):
