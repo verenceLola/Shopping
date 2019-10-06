@@ -17,7 +17,18 @@ class ListCreateShoppingList(ListCreateAPIView):
     serializer_class = ShoppingListSerializer
 
     def create(self, request, **kwargs):
-        pass
+        request_data = request.data
+        serializer = self.serializer_class(
+            data=request_data, context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = serializer.data
+        return success_response(
+            'Shopping List Created Successfully',
+            data,
+            status_code=status.HTTP_201_CREATED
+        )
 
     def get(self, request, **kwargs):
         shopping_list = ShoppingList.objects.filter(owner=request.user)

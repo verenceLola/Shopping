@@ -1,9 +1,9 @@
 from django.urls import path
-from .views import ListCreateShoppingList
+from .views import ListCreateShoppingList, SingleShoppingList
 
 app_name = 'shoppingItem'
 
 urlpatterns = [
     path('shoppinglist/', ListCreateShoppingList.as_view(),
-         name="list shopping"),
+         name="list shopping lists"),
 ]
