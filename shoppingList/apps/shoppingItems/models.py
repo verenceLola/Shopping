@@ -7,8 +7,15 @@ class Item(models.Model):
     """
     Item model
     """
-    name = models.CharField(max_length=10, blank=False)
+    name = models.CharField(max_length=20, blank=False)
     price = models.IntegerField(blank=False)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        """
+        allow unique item per user
+        """
+        unique_together = (('owner', 'name'))
 
     def __str__(self):
         """
