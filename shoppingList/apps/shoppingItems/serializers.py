@@ -16,8 +16,8 @@ class ShoppingListSerializer(serializers.ModelSerializer):
     # owner = AccountSerializer(required=False)
     description = serializers.CharField(required=True)
     items = ItemSerializer(many=True, required=False)
-    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False)  # noqa
-    updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False)  # noqa
+    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)  # noqa
+    updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)  # noqa
 
     def create(self, validated_data, **kwargs):
         """
