@@ -1,5 +1,5 @@
 from shoppingList.helpers.response import success_response, error_response
-from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 from shoppingList.apps.shoppingItems.models import ShoppingList
 from shoppingList.apps.shoppingItems.serializers import (
     ShoppingListSerializer
@@ -53,7 +53,7 @@ class ListCreateShoppingList(ListCreateAPIView):
         )
 
 
-class SingleShoppingList(RetrieveAPIView):
+class SingleShoppingList(RetrieveUpdateAPIView):
     """
     view for getting a single shopping list
     """
@@ -76,6 +76,29 @@ class SingleShoppingList(RetrieveAPIView):
         data = serializer.data
         return success_response(
             'Shopping List details',
+            data,
+            status_code=status.HTTP_200_OK
+        )
+
+    def put(self, request, pk):
+        """
+        update shopping list details
+        """
+        shopping_list = None
+        try:
+            shopping_list = ShoppingList.objects.get(pk=pk, owner=request.user)
+        except ShoppingList.DoesNotExist:
+            return error_response(
+                'Shopping List with id {} not found'.format(pk),
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+        data = request.data
+        serializer = self.serializer_class(shopping_list, data=data, partial=True, context={'request': request})  # noqa
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = serializer.data
+        return success_response(
+            'Shopping List Updated successfully',
             data,
             status_code=status.HTTP_200_OK
         )
