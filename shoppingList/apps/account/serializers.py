@@ -107,8 +107,11 @@ class LoginSerializer(serializers.Serializer):
                 'Either your email or password isn’t right. Double check '
                 'them'
             )
-
-        token = JWTAuthentication.generate_token(email)
+        user_data = {
+            "email": user.email,
+            "username": user.username
+        }
+        token = JWTAuthentication.generate_token(user_data)
 
         """
         return all required data upon successful validation

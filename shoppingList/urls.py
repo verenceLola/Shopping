@@ -18,6 +18,7 @@ from django.urls import path, include
 
 api_urls = [
     path('', include('shoppingList.apps.account.urls')),
+    path('', include('shoppingList.apps.shoppingItems.urls'))
 ]
 
 urlpatterns = [
