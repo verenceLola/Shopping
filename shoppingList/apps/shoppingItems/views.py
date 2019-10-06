@@ -2,7 +2,7 @@ from shoppingList.helpers.response import success_response, error_response
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 from shoppingList.apps.shoppingItems.models import ShoppingList
 from shoppingList.apps.shoppingItems.serializers import (
-    ShoppingListSerializer
+    ShoppingListSerializer, ItemSerializer
 )
 from rest_framework import status, settings, exceptions
 from rest_framework.permissions import IsAuthenticated
@@ -101,4 +101,57 @@ class SingleShoppingList(RetrieveUpdateAPIView):
             'Shopping List Updated successfully',
             data,
             status_code=status.HTTP_200_OK
+        )
+
+
+class ShoppingListItems(RetrieveUpdateAPIView):
+    """
+    view for getting and adding items to a shopping list
+    """
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ItemSerializer
+
+    def get(self, request, pk):
+        shopping_list = None
+        try:
+            shopping_list = ShoppingList.objects.get(pk=pk, owner=request.user)
+        except ShoppingList.DoesNotExist:
+            return error_response(
+                'Shopping List with id {} not found'.format(pk),
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+        items = shopping_list.items
+        serializer = self.serializer_class(items, many=True)
+        data = serializer.data
+        return success_response(
+            'Items in the Shopping List',
+            data,
+            status_code=status.HTTP_200_OK
+        ) if len(data) > 0 else success_response(
+            'No Items present in this Shopping List',
+            data,
+            status_code=status.HTTP_200_OK
+        )
+
+    def update(self, request, pk, **kwargs):
+        """
+        add items to a shopping list
+        """
+        shopping_list = None
+        try:
+            shopping_list = ShoppingList.objects.get(pk=pk, owner=request.user)
+        except ShoppingList.DoesNotExist:
+            return error_response(
+                'Shopping List with id {} not found'.format(pk),
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+        items = request.data
+        serializer = ShoppingListSerializer(shopping_list, data={'items':items}, partial=True, context={'request': request})  # noqa
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = serializer.data
+        return success_response(
+            'Item(s) added to shopping list successfully',
+            data,
+            status_code=status.HTTP_201_CREATED
         )
