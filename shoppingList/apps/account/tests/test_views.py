@@ -27,7 +27,6 @@ import datetime
         (missing_login_password, missing_login_password_response)
     ]
 )
-@pytest.mark.django_db
 def test_login_POST(create_user, client, credentials, expected_response):
     """
     test login endpoint
@@ -47,7 +46,6 @@ def test_login_POST(create_user, client, credentials, expected_response):
         assert response.data == expected_response
 
 
-@pytest.mark.django_db
 @freezegun.freeze_time('2019-01-26 7:00:00')
 def test_last_login_time(create_user, client, django_user_model):
     """

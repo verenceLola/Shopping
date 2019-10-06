@@ -146,7 +146,10 @@ class ShoppingListItems(RetrieveUpdateAPIView):
                 status_code=status.HTTP_404_NOT_FOUND
             )
         items = request.data
-        serializer = ShoppingListSerializer(shopping_list, data={'items':items}, partial=True, context={'request': request})  # noqa
+        serializer = ShoppingListSerializer(
+            shopping_list, data={'items': items}, partial=True,
+            context={'request': request}
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         data = serializer.data

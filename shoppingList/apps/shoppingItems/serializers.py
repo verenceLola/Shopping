@@ -59,17 +59,18 @@ class ShoppingListSerializer(serializers.ModelSerializer):
         raise serializers.ValidationError('Shopping List {} already exists'.format(value))  # noqa
 
     def update(self, instance, validated_data):
-        owner = self.context['request'].user
         items = validated_data.pop('items', [])
         instance.description = validated_data.get('description', instance.description)  # noqa
         instance.budget = validated_data.get('budget', instance.budget)
         instance.name = validated_data.get('name', instance.name)
         for item in items:
-            item, _ = Item.objects.get_or_create(
-                name=item['name'],
-                price=item['price'],
-                owner=owner
-            )
-            instance.items.add = item
+            item_serializer = ItemSerializer(data={
+                'name': item.get('name', ''),
+                'price': item.get('price', '')
+            }, context={'request': self.context['request']})
+            item_serializer.is_valid(raise_exception=True)
+            item_serializer.save()
+            item_instance = item_serializer.instance
+            instance.items.add(item_instance)
         instance.save()
         return instance
