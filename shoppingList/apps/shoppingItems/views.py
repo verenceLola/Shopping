@@ -1,5 +1,5 @@
 from shoppingList.helpers.response import success_response, error_response
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
 from shoppingList.apps.shoppingItems.models import ShoppingList
 from shoppingList.apps.shoppingItems.serializers import (
     ShoppingListSerializer
@@ -49,5 +49,33 @@ class ListCreateShoppingList(ListCreateAPIView):
         ) if len(data) > 0 else success_response(
             'No shopping List Found',
             self.get_paginated_response(data).data,
+            status_code=status.HTTP_200_OK
+        )
+
+
+class SingleShoppingList(RetrieveAPIView):
+    """
+    view for getting a single shopping list
+    """
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ShoppingListSerializer
+
+    def get(self, request, pk):
+        """
+        return shopping list with id:<pk>
+        """
+        shopping_list = None
+        try:
+            shopping_list = ShoppingList.objects.get(pk=pk, owner=request.user)
+        except ShoppingList.DoesNotExist:
+            return error_response(
+                'Shopping List with id {} not found'.format(pk),
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+        serializer = self.serializer_class(shopping_list)
+        data = serializer.data
+        return success_response(
+            'Shopping List details',
+            data,
             status_code=status.HTTP_200_OK
         )
