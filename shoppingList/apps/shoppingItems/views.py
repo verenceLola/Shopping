@@ -1,6 +1,9 @@
 from shoppingList.helpers.response import success_response, error_response
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
-from shoppingList.apps.shoppingItems.models import ShoppingList
+from rest_framework.generics import (
+    ListCreateAPIView, RetrieveUpdateAPIView, ListAPIView,
+    UpdateAPIView, DestroyAPIView
+)
+from shoppingList.apps.shoppingItems.models import ShoppingList, Item
 from shoppingList.apps.shoppingItems.serializers import (
     ShoppingListSerializer, ItemSerializer
 )
@@ -157,4 +160,87 @@ class ShoppingListItems(RetrieveUpdateAPIView):
             'Item(s) added to shopping list successfully',
             data,
             status_code=status.HTTP_201_CREATED
+        )
+
+
+class ShoppingItemListAPIView(ListAPIView):
+    serializer_class = ItemSerializer
+    permission_classes = (IsAuthenticated,)
+    pagination_class = settings.api_settings.DEFAULT_PAGINATION_CLASS
+
+    def get(self, request):
+        """
+        get all shopping items for a user
+        """
+        items = Item.objects.filter(owner=request.user)
+        page = None
+        try:
+            page = self.paginate_queryset(items)
+        except exceptions.NotFound:
+            return error_response(
+                'Invalid Page',
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+        serilizer = self.serializer_class(page, many=True)
+        data = serilizer.data
+        return success_response(
+            'Shopping Items Available',
+            self.get_paginated_response(data).data,
+            status_code=status.HTTP_200_OK
+        ) if len(data) > 0 else error_response(
+            'No Shopping Items Available',
+            status_code=status.HTTP_200_OK
+        )
+
+
+class ShoppingItemUpdateAPIView(UpdateAPIView, DestroyAPIView):
+    serializer_class = ItemSerializer
+    permission_classes = (IsAuthenticated,)
+    pagination_class = settings.api_settings.DEFAULT_PAGINATION_CLASS
+
+    def update(self, request, pk):
+        """
+        update an existing shopping list item
+        """
+        shopping_list_item = None
+        updated_data = request.data
+        try:
+            shopping_list_item = Item.objects.get(pk=pk)
+        except Item.DoesNotExist:
+            return error_response(
+                "Shopping List Item with id {} doesn't exist".format(pk),  # noqa
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+        serializer = self.serializer_class(
+            shopping_list_item,
+            data=updated_data,
+            partial=True,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = serializer.data
+        return success_response(
+            'Shopping Item Updated Successfully',
+            data,
+            status_code=status.HTTP_200_OK
+        )
+
+    def destroy(self, request, pk):
+        """
+        remove shopping item from shopping list
+        """
+        shopping_list_item = None
+        try:
+            shopping_list_item = Item.objects.get(pk=pk)
+        except Item.DoesNotExist:
+            return error_response(
+                "Shopping Item with id {} doesn't exist".format(pk),  # noqa
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+        shopping_list_item.delete()
+        return success_response(
+            'Shopping List Item {} removed successfully'.format(pk),
+            '',
+            status_code=status.HTTP_200_OK
         )
