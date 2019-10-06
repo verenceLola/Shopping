@@ -20,7 +20,14 @@ class ShoppingList(models.Model):
     """
     Shopping List Model
     """
-    desciption = models.CharField(max_length=266, blank=True)
+
+    class Meta:
+        """
+        allow unique name per user
+        """
+        unique_together = (('owner', 'name'))
+
+    description = models.CharField(max_length=266, blank=True)
     name = models.CharField(max_length=20, blank=False)
     created_at = models.DateTimeField(auto_now=True, blank=False)
     updated_at = models.DateTimeField(auto_now_add=True, blank=False)
