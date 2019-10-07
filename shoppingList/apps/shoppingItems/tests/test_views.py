@@ -210,7 +210,6 @@ def test_list_shopping_items(client, generate_token, create_shopping_item):
     url = reverse('shoppingItem:list shopping items')
     token, _ = generate_token
     response = client.get(url, HTTP_AUTHORIZATION='Bearer ' + token)
-    # import pdb; pdb.set_trace()
     assert response.data == list_shopping_items_response
 
 

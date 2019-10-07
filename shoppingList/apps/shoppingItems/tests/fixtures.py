@@ -140,12 +140,14 @@ add_shopping_items_success_message = {
             {
                 "id": 9,
                 "price": 45,
-                "name": "Spirit"
+                "name": "Spirit",
+                "bought": False
             },
             {
                 "id": 10,
                 "price": 56,
-                "name": "White Meat"
+                "name": "White Meat",
+                "bought": False
             }
         ],
         "created_at": "2019-10-06 11:42:59",
@@ -162,12 +164,14 @@ get_shopping_list_items_success_response = {
         {
             "id": 4,
             "price": 45,
-            "name": "Spirit"
+            "name": "Spirit",
+            "bought": False
         },
         {
             "id": 5,
             "price": 56,
-            "name": "White Meat"
+            "name": "White Meat",
+            "bought": False
         }
     ]
 }
@@ -253,6 +257,7 @@ list_shopping_items_response = {
                 "id": 14,
                 "name": "shopping item one",
                 "price": 300,
+                "bought": False
             }
         ]
     }
@@ -280,7 +285,8 @@ edit_item_correct_details_response = {
     "data": {
         "id": 15,
         "price": 56,
-        "name": "Another name"
+        "name": "Another name",
+        "bought": False
     }
 }
 
