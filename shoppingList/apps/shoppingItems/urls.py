@@ -14,7 +14,7 @@ urlpatterns = [
     path('shoppinglist/<int:pk>/items/', ShoppingListItems.as_view(),
          name='get shopping list items'),
     path('shoppingitem/<int:pk>/', ShoppingItemUpdateAPIView.as_view(),
-         name='edit shoppping item'),
+         name='edit-delete shoppping item'),
     path('shoppingitem/', ShoppingItemListAPIView.as_view(),
          name='list shopping items'),
 ]

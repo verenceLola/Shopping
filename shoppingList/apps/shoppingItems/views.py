@@ -187,8 +187,9 @@ class ShoppingItemListAPIView(ListAPIView):
             'Shopping Items Available',
             self.get_paginated_response(data).data,
             status_code=status.HTTP_200_OK
-        ) if len(data) > 0 else error_response(
+        ) if len(data) > 0 else success_response(
             'No Shopping Items Available',
+            '',
             status_code=status.HTTP_200_OK
         )
 
@@ -208,7 +209,7 @@ class ShoppingItemUpdateAPIView(UpdateAPIView, DestroyAPIView):
             shopping_list_item = Item.objects.get(pk=pk)
         except Item.DoesNotExist:
             return error_response(
-                "Shopping List Item with id {} doesn't exist".format(pk),  # noqa
+                "Shopping Item with id {} doesn't exist".format(pk),  # noqa
                 status_code=status.HTTP_404_NOT_FOUND
             )
         serializer = self.serializer_class(

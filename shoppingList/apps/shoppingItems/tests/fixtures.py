@@ -240,3 +240,56 @@ missing_shopping_list = {
     "status": "error",
     "message": "Shopping List with id 7656 not found"
 }
+
+list_shopping_items_response = {
+    "status": "success",
+    "message": "Shopping Items Available",
+    "data": {
+        "count": 1,
+        "next": None,
+        "previous": None,
+        "results": [
+            {
+                "id": 14,
+                "name": "shopping item one",
+                "price": 300,
+            }
+        ]
+    }
+}
+
+empty_shopping_list_items_response = {
+    "status": "success",
+    "message": "No Shopping Items Available",
+    "data": ""
+}
+
+list_invalid_shopping_list_item_page_response = {
+    "status": "error",
+    "message": "Invalid Page"
+}
+
+edit_item_correct_details = {
+    "name": "Another name",
+    "price": 56
+}
+
+edit_item_correct_details_response = {
+    "status": "success",
+    "message": "Shopping Item Updated Successfully",
+    "data": {
+        "id": 15,
+        "price": 56,
+        "name": "Another name"
+    }
+}
+
+edit_shopping_item_existing_name_response = {
+    "name": [
+        "Shopping Item shopping item one already exists"
+    ]
+}
+
+edit_shopping_item_existing_name = {
+    "name": "shopping item one",
+}
