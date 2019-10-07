@@ -27,6 +27,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,7 +41,8 @@ INSTALLED_APPS = [
 
     # internal apps
     'shoppingList.apps.account',
-    'shoppingList.apps.shoppingItems'
+    'shoppingList.apps.shoppingItems',
+    'shoppingList.apps.notifier',
 ]
 
 AUTH_USER_MODEL = 'account.User'
@@ -91,6 +93,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'shoppingList.wsgi.application'
+ASGI_APPLICATION = 'shoppingList.apps.notifier.routing.application'
+
+# Configure Channels
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 
 # Database

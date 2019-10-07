@@ -15,13 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from shoppingList.apps.notifier.views import NotificationsPage
 
 api_urls = [
     path('', include('shoppingList.apps.account.urls')),
-    path('', include('shoppingList.apps.shoppingItems.urls'))
+    path('', include('shoppingList.apps.shoppingItems.urls')),
+    path('', include('shoppingList.apps.notifier.urls')),
 ]
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(api_urls)),
+    path('notifications/', NotificationsPage.as_view()),
 ]
