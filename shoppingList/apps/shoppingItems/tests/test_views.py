@@ -18,8 +18,13 @@ from .fixtures import (
     update_shopping_list_success_response, update_shopping_list_valid_details,
     get_shopping_list_items_of_empty_shopping_list_response,
     shopping_item_missing_price_response, shopping_item_missing_name_response,
-    missing_shopping_list
+    missing_shopping_list, list_shopping_items_response,
+    empty_shopping_list_items_response, edit_item_correct_details,
+    list_invalid_shopping_list_item_page_response,
+    edit_shopping_item_existing_name_response,
+    edit_shopping_item_existing_name, edit_item_correct_details_response,
 )
+from shoppingList.apps.shoppingItems.models import Item
 
 
 def test_create_new_shopping_list_has_correct_owner(client, generate_token,django_user_model):  # noqa
@@ -196,3 +201,112 @@ def test_add_shopping_item_to_missing_shopping_list(client, generate_token):  # 
         content_type='application/json'
     )
     assert response.data == missing_shopping_list
+
+
+def test_list_shopping_items(client, generate_token, create_shopping_item):
+    """
+    test list shopping items
+    """
+    url = reverse('shoppingItem:list shopping items')
+    token, _ = generate_token
+    response = client.get(url, HTTP_AUTHORIZATION='Bearer ' + token)
+    # import pdb; pdb.set_trace()
+    assert response.data == list_shopping_items_response
+
+
+def test_list_empty_shopping_items(client, generate_token):
+    """
+    test listing non available items
+    """
+    url = reverse('shoppingItem:list shopping items')
+    token, _ = generate_token
+    response = client.get(url, HTTP_AUTHORIZATION='Bearer ' + token)
+    assert response.data == empty_shopping_list_items_response
+
+
+def test_list_invalid_shopping_list_item_page(client, generate_token):
+    """
+    test list invalid page for item
+    """
+    url = reverse('shoppingItem:list shopping items')
+    token, _ = generate_token
+    response = client.get(url + '?page=343', HTTP_AUTHORIZATION='Bearer ' + token)  # noqa
+    assert response.data == list_invalid_shopping_list_item_page_response
+
+
+@pytest.mark.parametrize(
+    "new_data, expected_response",
+    [
+        (edit_item_correct_details, edit_item_correct_details_response),  # noqa
+        (edit_shopping_item_existing_name, edit_shopping_item_existing_name_response)  # noqa
+    ]
+)
+def test_update_shopping_item(client, create_shopping_item, generate_token, new_data, expected_response):  # noqa
+    """
+    test update shopping item
+    """
+    item = create_shopping_item
+    url = reverse('shoppingItem:edit-delete shoppping item', args=[item.id])
+    token, _ = generate_token
+    response = client.put(
+        url, new_data, HTTP_AUTHORIZATION='Bearer ' + token,
+        content_type='application/json',
+    )
+    assert response.data == expected_response
+
+
+def test_edit_missing_shopping_item(client, generate_token):
+    """
+    test edit missing shopping item
+    """
+    missing_item = 5757
+    expected_response = {
+        "status": "error",
+        "message": "Shopping Item with id {} doesn't exist".format(missing_item)  # noqa
+    }
+    token, _ = generate_token
+    url = reverse('shoppingItem:edit-delete shoppping item', args=[missing_item])  # noqa
+    response = client.put(
+        url, {}, HTTP_AUTHORIZATION='Bearer ' + token,
+        content_type='application/json',
+    )
+    assert response.data == expected_response
+
+
+def test_delete_missing_shopping_item(client, generate_token):
+    """
+    test delete missing shopping item
+    """
+    missing_item = 5757
+    expected_response = {
+        "status": "error",
+        "message": "Shopping Item with id {} doesn't exist".format(missing_item)  # noqa
+    }
+    token, _ = generate_token
+    url = reverse('shoppingItem:edit-delete shoppping item', args=[missing_item])  # noqa
+    response = client.delete(
+        url, {}, HTTP_AUTHORIZATION='Bearer ' + token,
+        content_type='application/json',
+    )
+    assert response.data == expected_response
+
+
+def test_delete_shopping_item(client, generate_token, create_shopping_item):  # noqa
+    """
+    test delete shopping item
+    """
+    id = create_shopping_item.id
+    url = reverse('shoppingItem:edit-delete shoppping item', args=[id])
+    token, _ = generate_token
+    expected_response = {
+        "status": "success",
+        "message": "Shopping List Item {} removed successfully".format(id),
+        "data": ""
+    }
+    response = client.delete(
+        url, {}, HTTP_AUTHORIZATION='Bearer ' + token,
+        content_type='application/json',
+    )
+    assert response.data == expected_response
+    with pytest.raises(create_shopping_item.DoesNotExist):
+        Item.objects.get(pk=id)
