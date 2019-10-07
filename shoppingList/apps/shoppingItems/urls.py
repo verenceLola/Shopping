@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import (
     ListCreateShoppingList, SingleShoppingList, ShoppingListItems,
-    ShoppingItemListAPIView, ShoppingItemUpdateAPIView
+    ShoppingItemListAPIView, ShoppingItemUpdateAPIView,
+    MarkShopppingItem
 )
 
 app_name = 'shoppingItem'
@@ -17,4 +18,6 @@ urlpatterns = [
          name='edit-delete shoppping item'),
     path('shoppingitem/', ShoppingItemListAPIView.as_view(),
          name='list shopping items'),
+    path('shoppingitem/<int:pk>/buy/', MarkShopppingItem.as_view(),
+         name='buy shopping item'),
 ]

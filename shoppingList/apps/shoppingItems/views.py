@@ -1,7 +1,7 @@
 from shoppingList.helpers.response import success_response, error_response
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateAPIView, ListAPIView,
-    UpdateAPIView, DestroyAPIView
+    UpdateAPIView, DestroyAPIView, RetrieveAPIView
 )
 from shoppingList.apps.shoppingItems.models import ShoppingList, Item
 from shoppingList.apps.shoppingItems.serializers import (
@@ -243,5 +243,43 @@ class ShoppingItemUpdateAPIView(UpdateAPIView, DestroyAPIView):
         return success_response(
             'Shopping List Item {} removed successfully'.format(pk),
             '',
+            status_code=status.HTTP_200_OK
+        )
+
+
+class MarkShopppingItem(RetrieveAPIView):
+    """
+    view for toggle shopping item bought field
+    """
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ItemSerializer
+
+    def get(self, request, pk):
+        """
+        mark item as bought or not
+        """
+        item = None
+        try:
+            item = Item.objects.get(pk=pk, owner=request.user)
+        except Item.DoesNotExist:
+            return error_response(
+                "Shopping Item with id {} doesn't exist".format(pk),  # noqa
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+        bought = item.bought
+        serializer = self.serializer_class(
+            item, data={'bought': not bought}, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = serializer.data
+        instance = serializer.instance
+        return success_response(
+            'Item marked as bought successfully',
+            data,
+            status_code=status.HTTP_200_OK
+        ) if instance.bought else success_response(
+            'Item unmarked as bought successfully',
+            data,
             status_code=status.HTTP_200_OK
         )
