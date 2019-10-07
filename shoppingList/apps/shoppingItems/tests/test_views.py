@@ -23,6 +23,7 @@ from .fixtures import (
     list_invalid_shopping_list_item_page_response,
     edit_shopping_item_existing_name_response,
     edit_shopping_item_existing_name, edit_item_correct_details_response,
+    buy_item_success_response, buy_missing_item_response
 )
 from shoppingList.apps.shoppingItems.models import Item
 
@@ -309,3 +310,30 @@ def test_delete_shopping_item(client, generate_token, create_shopping_item):  # 
     assert response.data == expected_response
     with pytest.raises(create_shopping_item.DoesNotExist):
         Item.objects.get(pk=id)
+
+
+def test_mark_item_as_bought(client, create_shopping_item, generate_token):
+    """
+    test user can mark item as bought
+    """
+    item = create_shopping_item
+    url = reverse('shoppingItem:buy shopping item', args=[item.id])
+    token, _ = generate_token
+    response = client.get(url, HTTP_AUTHORIZATION='Bearer ' + token)
+    assert Item.objects.get(pk=item.id).bought
+    assert response.status_code == 200
+    assert response.data == buy_item_success_response
+
+
+def test_mark_missing_item_as_bought(client, generate_token):
+    """
+    test marking missing item as bought
+    """
+    missing_id = 7587
+    url = reverse('shoppingItem:buy shopping item', args=[missing_id])
+    token, _ = generate_token
+    response = client.get(url, HTTP_AUTHORIZATION='Bearer ' + token)
+    assert response.status_code == 404
+    assert response.data == buy_missing_item_response
+    with pytest.raises(Item.DoesNotExist):
+        Item.objects.get(pk=missing_id)

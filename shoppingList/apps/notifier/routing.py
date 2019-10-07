@@ -8,4 +8,3 @@ application = ProtocolTypeRouter({
         path('notifications/', NotificationsConsumer)
     ])
 })
-

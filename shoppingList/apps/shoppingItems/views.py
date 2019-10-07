@@ -7,6 +7,7 @@ from shoppingList.apps.shoppingItems.models import ShoppingList, Item
 from shoppingList.apps.shoppingItems.serializers import (
     ShoppingListSerializer, ItemSerializer
 )
+from rest_framework import filters
 from rest_framework import status, settings, exceptions
 from rest_framework.permissions import IsAuthenticated
 
@@ -167,31 +168,16 @@ class ShoppingItemListAPIView(ListAPIView):
     serializer_class = ItemSerializer
     permission_classes = (IsAuthenticated,)
     pagination_class = settings.api_settings.DEFAULT_PAGINATION_CLASS
+    search_fields = ['name', 'price']
+    filter_backends = (filters.SearchFilter,)
 
-    def get(self, request):
+    def get_queryset(self):
         """
-        get all shopping items for a user
+        This view should return a list of all the items
+        for the currently authenticated user.
         """
-        items = Item.objects.filter(owner=request.user)
-        page = None
-        try:
-            page = self.paginate_queryset(items)
-        except exceptions.NotFound:
-            return error_response(
-                'Invalid Page',
-                status_code=status.HTTP_400_BAD_REQUEST
-            )
-        serilizer = self.serializer_class(page, many=True)
-        data = serilizer.data
-        return success_response(
-            'Shopping Items Available',
-            self.get_paginated_response(data).data,
-            status_code=status.HTTP_200_OK
-        ) if len(data) > 0 else success_response(
-            'No Shopping Items Available',
-            '',
-            status_code=status.HTTP_200_OK
-        )
+        user = self.request.user
+        return Item.objects.filter(owner=user)
 
 
 class ShoppingItemUpdateAPIView(UpdateAPIView, DestroyAPIView):
