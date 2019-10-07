@@ -246,32 +246,28 @@ missing_shopping_list = {
 }
 
 list_shopping_items_response = {
-    "status": "success",
-    "message": "Shopping Items Available",
-    "data": {
-        "count": 1,
-        "next": None,
-        "previous": None,
-        "results": [
-            {
-                "id": 14,
-                "name": "shopping item one",
-                "price": 300,
-                "bought": False
-            }
-        ]
-    }
+    "count": 1,
+    "next": None,
+    "previous": None,
+    "results": [
+        {
+            "id": 14,
+            "name": "shopping item one",
+            "price": 300,
+            "bought": False
+        }
+    ]
 }
 
 empty_shopping_list_items_response = {
-    "status": "success",
-    "message": "No Shopping Items Available",
-    "data": ""
+    "count": 0,
+    "next": None,
+    "previous": None,
+    "results": []
 }
 
 list_invalid_shopping_list_item_page_response = {
-    "status": "error",
-    "message": "Invalid Page"
+    "detail": "Invalid page."
 }
 
 edit_item_correct_details = {
@@ -298,4 +294,20 @@ edit_shopping_item_existing_name_response = {
 
 edit_shopping_item_existing_name = {
     "name": "shopping item one",
+}
+
+buy_item_success_response = {
+    "status": "success",
+    "message": "Item marked as bought successfully",
+    "data": {
+        "id": 18,
+        "name": "shopping item one",
+        "price": 300,
+        "bought": True
+    }
+}
+
+buy_missing_item_response = {
+    "status": "error",
+    "message": "Shopping Item with id 7587 doesn't exist"
 }
