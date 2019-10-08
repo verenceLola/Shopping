@@ -5,7 +5,7 @@ trigger:
 resources:
   containers:
     - container: Django_Container
-      image: ubuntu:16.04
+      image: verencelola/custom_ubuntu
     - container: redis
       image: redis
     - container: postgres
@@ -14,30 +14,22 @@ resources:
 pool:
   vmImage: 'ubuntu-latest'
 
-container: Django_Container
+container: 'Django_Container'
 services:
   redis: redis
   postgres: postgres
 
-strategy:
-  matrix:
-    Python 3.6:
-      PYTHON_VERSION: '3.6'
-    Python 3.7:
-      PYTHON_VERSION: '3.7'
-  maxParallel: 2
-
 steps:
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: '$(PYTHON_VERSION)'
-      architecture: 'x64'
 
-  - script: apt-get install libpq-dev python3-dev
-    displayName: 'Install tools to fix psycopy2 install errors'
-
-  - script: pip install -r requirements.txt
+  - script: |
+      sudo pip install -r requirements.txt
     displayName: 'Install requirements'
+  
+  - script: |
+      echo 'REDIS_URL=redis://redis:6379' | tee -a .env 
+      echo DATABASE_URL=postgres://postgres@postgres:5432 | tee -a .env
+      echo SECRET_KEY=$APPLICATION_SECRET | tee -a .env
+    displayName: 'Save env to .env'
 
   - script: |
       python -m pip install flake8
@@ -47,12 +39,8 @@ steps:
   - script: |
       pip install pytest
       pip install pytest-cov
-      pytest tests --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+      pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
     displayName: 'Test with pytest'
-    env:
-      REDIS_URL: $(REDIS_URL)
-      DATABASE_URL: $(POSTGRESQL_URL)
-      SECRET_KEY: $(SECRET_KEY)
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
