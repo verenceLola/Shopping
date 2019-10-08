@@ -2,18 +2,30 @@
 trigger:
 - develop
 
+resources:
+  containers:
+    - container: Django_Container
+      image: ubuntu:16.04
+    - container: redis
+      image: redis
+    - container: postgres
+      image: postgres
+
 pool:
   vmImage: 'ubuntu-latest'
+
+container: Django_Container
+services:
+  redis: redis
+  postgres: postgres
+
 strategy:
   matrix:
-    Python35:
-      PYTHON_VERSION: '3.5'
-    Python36:
+    Python 3.6:
       PYTHON_VERSION: '3.6'
-    Python37:
+    Python 3.7:
       PYTHON_VERSION: '3.7'
-  maxParallel: 3
-
+  maxParallel: 2
 
 steps:
   - task: UsePythonVersion@0
@@ -21,7 +33,7 @@ steps:
       versionSpec: '$(PYTHON_VERSION)'
       architecture: 'x64'
 
-  - script: sudo apt-get install libpq-dev python3-dev
+  - script: apt-get install libpq-dev python3-dev
     displayName: 'Install tools to fix psycopy2 install errors'
 
   - script: pip install -r requirements.txt
@@ -36,7 +48,11 @@ steps:
       pip install pytest
       pip install pytest-cov
       pytest tests --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
-      displayName: 'Test with pytest'
+    displayName: 'Test with pytest'
+    env:
+      REDIS_URL: $(REDIS_URL)
+      DATABASE_URL: $(POSTGRESQL_URL)
+      SECRET_KEY: $(SECRET_KEY)
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
