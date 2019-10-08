@@ -1,7 +1,4 @@
 
-trigger:
-- develop
-
 resources:
   containers:
     - container: Django_Container
