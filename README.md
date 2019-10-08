@@ -1,6 +1,7 @@
 # Shopping
 
 [![Build Status](https://travis-ci.org/verenceLola/Shopping.svg?branch=develop)](https://travis-ci.org/verenceLola/Shopping)
+[![Build Status](https://verencelola.visualstudio.com/Shopping%20List/_apis/build/status/verenceLola.Shopping?branchName=develop)](https://verencelola.visualstudio.com/Shopping%20List/_build/latest?definitionId=11&branchName=develop)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1a24177c6a8c5e330a97/maintainability)](https://codeclimate.com/github/verenceLola/Shopping/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/1a24177c6a8c5e330a97/test_coverage)](https://codeclimate.com/github/verenceLola/Shopping/test_coverage)
 [![codecov](https://codecov.io/gh/verenceLola/Shopping/branch/develop/graph/badge.svg)](https://codecov.io/gh/verenceLola/Shopping)
