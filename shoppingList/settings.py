@@ -111,7 +111,7 @@ CHANNEL_LAYERS = {
 
 # configure application environments
 project_root = environ.Path(__file__) - 3
-
+TEST_RUNNER = 'shoppingList.runner.PytestTestRunner'
 SITE_ROOT = project_root()
 DEBUG = env.bool('DEBUG', default=False)
 TEMPLATE_DEBUG = DEBUG

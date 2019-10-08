@@ -26,10 +26,10 @@ steps:
     displayName: 'Install requirements'
   
   - script: |
-      echo 'REDIS_URL=redis://redis:6379' | tee -a .env 
+      echo 'REDIS_URL=redis://redis:6379' | tee -a .env
       echo DATABASE_URL=postgres://postgres@postgres:5432 | tee -a .env
       echo SECRET_KEY=$APPLICATION_SECRET | tee -a .env
-    displayName: 'Save env to .env'
+    displayName: 'Configure Environment Variables'
 
   - script: |
       python -m pip install flake8
@@ -37,9 +37,7 @@ steps:
     displayName: 'Run lint tests'
 
   - script: |
-      pip install pytest
-      pip install pytest-cov
-      pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+      ./manage.py test -- --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
     displayName: 'Test with pytest'
 
   - task: PublishTestResults@2
