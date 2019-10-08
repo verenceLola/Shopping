@@ -1,4 +1,3 @@
-
 resources:
   containers:
     - container: Django_Container
